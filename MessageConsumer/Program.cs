@@ -37,7 +37,7 @@ public class Program
 
             // Brug GetConnectionString til at hente strengen defineret under "ConnectionStrings"
             // Navnet "PostgresDb" skal matche nøglen i appsettings.json
-            string? connectionString = configuration.GetConnectionString("PostgresDb");
+            string? connectionString = "asfgasgas_Asfgasga_asfgasjw";
 
             // Tjek om connection string blev fundet - ellers kan appen ikke køre
             if (string.IsNullOrEmpty(connectionString))
