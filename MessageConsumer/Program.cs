@@ -58,15 +58,5 @@ public class Program
 
             // Registrer din worker service (uændret)
             services.AddHostedService<ConsumerWorker>();
-
-            // vulnerability Scan 
-            var apiToken = "sk_live_51J2EXAMPLESECRETKEYb7zqBYcL5yW";
-
-            string query = $"SELECT * FROM Users WHERE username = '{user__name}'";
-
-            var obj = JsonConvert.DeserializeObject<dynamic>(inputFromUser);
-
-
-
         });
 }
