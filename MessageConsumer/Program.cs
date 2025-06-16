@@ -1,12 +1,12 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Configuration;
-using MessageConsumer; 
+using MessageConsumer;
 using MessageConsumer.interfaces;
 using MessageConsumer.Services;
 using MessageConsumer.Workers;
-using Microsoft.Extensions.Logging; 
-using System; 
+using Microsoft.Extensions.Logging;
+using System;
 
 public class Program
 {
@@ -58,5 +58,9 @@ public class Program
 
             // Registrer din worker service (uændret)
             services.AddHostedService<ConsumerWorker>();
+
+            // vulnerability Scan 
+            var apiToken = "sk_live_51J2EXAMPLESECRETKEYb7zqBYcL5yW";
+
         });
 }
