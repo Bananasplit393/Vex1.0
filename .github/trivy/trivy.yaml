@@ -1,3 +1,4 @@
-vex:
-  file:
-    - ../../vex.json
+vulnerability:
+  vex:
+    - ./.vex/vex.json # Path to your VEX file relative to the repo root
+  show-suppressed: true # Set to 'true' to see suppressed findings in SARIF
