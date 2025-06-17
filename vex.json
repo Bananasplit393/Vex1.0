@@ -1,0 +1,21 @@
+{
+	"bomFormat": "CycloneDX",
+	"specVersion": "1.5",
+	"version": 1,
+	"vulnerabilities": [
+		{
+			"id": "CVE-2020-8911",
+			"analysis": {
+				"state": "not_affected",
+				"justification": "code_not_reachable",
+				"response": ["will_not_fix", "update"],
+				"detail": "The vulnerable function is not called"
+			},
+			"affects": [
+				{
+					"ref": "urn:cdx:3e671687-395b-41f5-a30f-a58921a69b79/1#pkg:golang/github.com/aws/aws-sdk-go@v1.44.234"
+				}
+			]
+		}
+	]
+}
