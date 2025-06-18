@@ -11,6 +11,6 @@ vulnerability:
 
   report:
     format: json # Output format for the report
-    output: trivy-results.json # Output file name for the SARIF report
+    output: trivy-results.json # Output file name for the json report
 
   exit code: 0 # Exit code to prevent failure on vulnerabilities
