@@ -34,7 +34,6 @@ jobs:
             --severity CRITICAL,HIGH,MEDIUM,LOW \
             --ignore-unfixed \
             localbuild/trivyapptest:latest > trivy-results.json # <--- CAPTURE STDOUT TO FILE
-        env:
           # The aquasecurity/trivy-action installs trivy binary, so we can call it directly
           # This assumes aquasecurity/trivy-action is run without issues.
           # We manually construct the command line arguments as we did for 'docker run'
