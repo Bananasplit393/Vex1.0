@@ -1,3 +1,4 @@
+# trivy.yaml
 vulnerability:
   vex:
     - ./.vex/vex.json # Path to your VEX file relative to the repo root
@@ -9,8 +10,14 @@ vulnerability:
     - LOW
   ignore-unfixed: false # Ignore unfixed vulnerabilities
 
-  report:
-    format: json # Output format for the report
-    output: trivy-results.json # Output file name for the json report
+# --- REMOVE THESE LINES ---
+# report:
+#   format: json # Output format for the report
+#   output: trivy-results.json # Output file name for the json report
+# --- END REMOVAL ---
 
-  exit code: 0 # Exit code to prevent failure on vulnerabilities
+# Note: "exit code" should be "exit-code" for Trivy CLI (like in the workflow's uses action).
+# For consistency, you can change it here or rely on the action's exit-code parameter.
+# Since we are using raw CLI here, we won't pass exit-code to the config file
+# as it's typically a CLI flag.
+# exit-code: 0 # This line can also be removed from trivy.yaml
