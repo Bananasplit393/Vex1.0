@@ -2,20 +2,5 @@
 	"bomFormat": "CycloneDX",
 	"specVersion": "1.5",
 	"version": 1,
-	"vulnerabilities": [
-		{
-			"id": "CVE-2024-21907",
-			"analysis": {
-				"state": "not_affected",
-				"justification": "code_not_reachable",
-				"response": ["will_not_fix", "update"],
-				"detail": "The vulnerable function is not called"
-			},
-			"affects": [
-				{
-					"ref": "pkg:nuget/Newtonsoft.Json@12.0.1"
-				}
-			]
-		}
-	]
+	"vulnerabilities": [{}]
 }
