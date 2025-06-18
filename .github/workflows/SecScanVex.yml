@@ -27,13 +27,13 @@ jobs:
           cp vex.json .vex/
 
       - name: Run Trivy vulnerability scan with VEX
-        uses: aquasecurity/trivy-action@0.21.0 # Use the action version you had previously
+        uses: aquasecurity/trivy-action@0.21.0
         with:
           scan-type: "image"
           image-ref: "localbuild/trivyapptest:latest"
           trivy-config: ".github/trivy/trivy.yaml"
-          format: "sarif" # Explicitly set format to SARIF
-          output: "trivy-results.sarif" # Explicitly set output file for SARIF
+          format: "sarif"
+          output: "trivy-results.sarif"
           exit-code: "0" # Exit code 0 to prevent failure on vulnerabilities
           severity: "CRITICAL,HIGH,MEDIUM,LOW" # Filter by severity before VEX
           ignore-unfixed: false # Ignore unfixed vulnerabilities
@@ -43,12 +43,4 @@ jobs:
         uses: github/codeql-action/upload-sarif@v3
         with:
           sarif_file: "trivy-results.sarif"
-          # category: "trivy-vex-scan" # Uncomment if you use categories
-
-      # --- COMMENT OUT JSON UPLOAD STEP (For Debugging) ---
-      # - name: Upload Raw Trivy JSON Results
-      #   uses: actions/upload-artifact@v4
-      #   with:
-      #     name: trivy-json-results
-      #     path: trivy-results.json
-      #     if-no-files-found: error
+          # category: "trivy-vex-scan" # Uncomment this line if you want to use categories

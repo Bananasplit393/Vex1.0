@@ -13,7 +13,7 @@
 			},
 			"affects": [
 				{
-					"ref": "pkg:nuget/package-name@version"
+					"ref": "pkg:nuget/Newtonsoft.Json@12.0.1"
 				}
 			]
 		}
