@@ -1,3 +1,4 @@
+# SecScanVex.yml
 name: Trivy Scan with VEX
 
 on:
@@ -23,23 +24,24 @@ jobs:
       - name: Create VEX directory (local files)
         run: |
           mkdir -p .vex
-          # Ensure vex.json exists at the root of your repo, or adjust this path.
-          # This copies vex.json into a .vex/ directory at the repo root.
           cp vex.json .vex/
 
-      - name: Run Trivy vulnerability scan with VEX
-        uses: aquasecurity/trivy-action@0.21.0
-        with:
-          scan-type: "image"
-          image-ref: "localbuild/trivyapptest:latest"
-          trivy-config: ".github/trivy/trivy.yaml"
-          format: "json"
-          output: "trivy-results.json"
-          # exit-code: "0" # Exit code 0 to prevent failure on vulnerabilities
-          severity: "CRITICAL,HIGH,MEDIUM,LOW" # Filter by severity before VEX
-          ignore-unfixed: false # Ignore unfixed vulnerabilities
-
-          # Can't do sarif upload and json output at the same time
+      - name: Run Trivy CLI for JSON Output (Debugging PURL)
+        # Use the official Trivy image to run the CLI command directly
+        # -v mounts the current workspace so Trivy can see your files
+        # --config-file points to your trivy.yaml for VEX settings
+        # --format json and --output directly control the JSON file generation
+        run: |
+          docker run --rm \
+            -v "$PWD":/github/workspace \
+            aquasecurity/trivy:0.52.2 \
+            image --config-file /github/workspace/.github/trivy/trivy.yaml \
+            --format json \
+            --output trivy-results.json \
+            --severity CRITICAL,HIGH,MEDIUM,LOW \
+            --ignore-unfixed \
+            localbuild/trivyapptest:latest
+      # SARIF upload step should remain commented out for this debugging phase
       # - name: Upload Trivy scan results to GitHub Security tab
       #   if: always()
       #   uses: github/codeql-action/upload-sarif@v3
