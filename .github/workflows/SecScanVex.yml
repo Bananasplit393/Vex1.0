@@ -25,6 +25,11 @@ jobs:
           mkdir -p .vex
           cp vex.json .vex/
 
+      - name: Setup Trivy CLI
+        uses: aquasecurity/setup-trivy
+        with:
+          version: "latest" # Installs the latest stable Trivy CLI version
+
       - name: Run Trivy with JSON Output (for PURL debugging)
         # We use aquasecurity/trivy-action, but capture its output to a file.
         # This leverages the action's robust image handling.
