@@ -33,9 +33,9 @@ jobs:
           scan-type: "image"
           image-ref: "localbuild/trivyapptest:latest"
           trivy-config: ".github/trivy/trivy.yaml"
-          format: "sarif"
-          output: "trivy-results.sarif"
-          exit-code: "0" # Exit code 0 to prevent failure on vulnerabilities
+          # format: "sarif"
+          # output: "trivy-results.sarif"
+          # exit-code: "0" # Exit code 0 to prevent failure on vulnerabilities
           severity: "CRITICAL,HIGH,MEDIUM,LOW" # Filter by severity before VEX
           ignore-unfixed: false # Ignore unfixed vulnerabilities
 
