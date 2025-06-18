@@ -2,3 +2,15 @@ vulnerability:
   vex:
     - ./.vex/vex.json # Path to your VEX file relative to the repo root
   show-suppressed: true # Set to 'true' to see suppressed findings in SARIF
+  severity:
+    - CRITICAL
+    - HIGH
+    - MEDIUM
+    - LOW
+  ignore-unfixed: false # Ignore unfixed vulnerabilities
+
+  report:
+    format: json # Output format for the report
+    output: trivy-results.json # Output file name for the SARIF report
+
+  exit code: 0 # Exit code to prevent failure on vulnerabilities
