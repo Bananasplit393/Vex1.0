@@ -27,20 +27,17 @@ jobs:
           cp vex.json .vex/
 
       - name: Run Trivy CLI for JSON Output (Debugging PURL)
-        # Use the official Trivy image to run the CLI command directly
-        # -v mounts the current workspace so Trivy can see your files
-        # --config-file points to your trivy.yaml for VEX settings
-        # --format json and --output directly control the JSON file generation
         run: |
           docker run --rm \
             -v "$PWD":/github/workspace \
-            aquasecurity/trivy:0.52.2 \
+            aquasecurity/trivy:latest \  # <--- CHANGED THIS LINE
             image --config-file /github/workspace/.github/trivy/trivy.yaml \
             --format json \
             --output trivy-results.json \
             --severity CRITICAL,HIGH,MEDIUM,LOW \
             --ignore-unfixed \
             localbuild/trivyapptest:latest
+
       # SARIF upload step should remain commented out for this debugging phase
       # - name: Upload Trivy scan results to GitHub Security tab
       #   if: always()
@@ -54,4 +51,4 @@ jobs:
         with:
           name: trivy-json-results
           path: trivy-results.json
-          if-no-files-found: error # Ensure it errors if the file isn't created
+          if-no-files-found: error
