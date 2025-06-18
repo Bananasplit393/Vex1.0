@@ -1,4 +1,3 @@
-# SecScanVex.yml
 name: Trivy Scan with VEX
 
 on:
@@ -26,29 +25,45 @@ jobs:
           mkdir -p .vex
           cp vex.json .vex/
 
-      - name: Run Trivy CLI for JSON Output (Debugging PURL)
+      - name: Run Trivy with JSON Output (for PURL debugging)
+        # We use aquasecurity/trivy-action, but capture its output to a file.
+        # This leverages the action's robust image handling.
         run: |
-          docker run --rm \
-            -v "$PWD":/github/workspace \
-            aquasecurity/trivy:latest \  # <--- CHANGED THIS LINE
-            image --config-file /github/workspace/.github/trivy/trivy.yaml \
+          /usr/bin/trivy image --config-file .github/trivy/trivy.yaml \
             --format json \
-            --output trivy-results.json \
             --severity CRITICAL,HIGH,MEDIUM,LOW \
             --ignore-unfixed \
-            localbuild/trivyapptest:latest
+            localbuild/trivyapptest:latest > trivy-results.json # <--- CAPTURE STDOUT TO FILE
+        env:
+          # The aquasecurity/trivy-action installs trivy binary, so we can call it directly
+          # This assumes aquasecurity/trivy-action is run without issues.
+          # We manually construct the command line arguments as we did for 'docker run'
+          # but directly for the 'trivy' binary installed by the action itself.
+          # This is the most reliable way to ensure Trivy outputs JSON to a file
+          # while still using the action for setup.
+
+          # NOTE: If the 'Run Trivy with JSON Output' step still fails with
+          # "command not found: trivy", it means aquasecurity/trivy-action
+          # isn't actually installing the trivy binary directly onto the PATH
+          # or the action's entrypoint is obscuring it.
+          # In that *unlikely* case, we would explicitly use aquasecurity/setup-trivy
+          # before this step:
+          # - name: Setup Trivy CLI
+          #   uses: aquasecurity/setup-trivy@v1
+          #   with:
+          #     version: 'latest'
 
       # SARIF upload step should remain commented out for this debugging phase
       # - name: Upload Trivy scan results to GitHub Security tab
       #   if: always()
       #   uses: github/codeql-action/upload-sarif@v3
-      # with:
-      #   sarif_file: "trivy-results.sarif"
+      #   with:
+      #     sarif_file: "trivy-results.sarif"
       # category: "trivy-vex-scan"
 
       - name: Upload Raw Trivy JSON Results
         uses: actions/upload-artifact@v4
         with:
           name: trivy-json-results
-          path: trivy-results.json
+          path: trivy-results.json # This file should now exist
           if-no-files-found: error
