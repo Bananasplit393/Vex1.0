@@ -13,7 +13,7 @@
 			},
 			"affects": [
 				{
-					"ref": "urn:cdx:3e671687-395b-41f5-a30f-a58921a69b79/1#pkg:golang/github.com/aws/aws-sdk-go@v1.44.234"
+					"ref": "pkg:nuget/package-name@version"
 				}
 			]
 		}
