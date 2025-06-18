@@ -4,7 +4,7 @@
 	"version": 1,
 	"vulnerabilities": [
 		{
-			"id": "CVE-2020-8911",
+			"id": "CVE-2024-21907",
 			"analysis": {
 				"state": "not_affected",
 				"justification": "code_not_reachable",
