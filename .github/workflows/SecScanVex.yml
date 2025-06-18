@@ -39,12 +39,13 @@ jobs:
           severity: "CRITICAL,HIGH,MEDIUM,LOW" # Filter by severity before VEX
           ignore-unfixed: false # Ignore unfixed vulnerabilities
 
-      - name: Upload Trivy scan results to GitHub Security tab
-        if: always()
-        uses: github/codeql-action/upload-sarif@v3
-        with:
-          sarif_file: "trivy-results.sarif"
-          # category: "trivy-vex-scan"
+          # Can't do sarif upload and json output at the same time
+      # - name: Upload Trivy scan results to GitHub Security tab
+      #   if: always()
+      #   uses: github/codeql-action/upload-sarif@v3
+      # with:
+      #   sarif_file: "trivy-results.sarif"
+      # category: "trivy-vex-scan"
 
       - name: Upload Raw Trivy JSON Results
         uses: actions/upload-artifact@v4
