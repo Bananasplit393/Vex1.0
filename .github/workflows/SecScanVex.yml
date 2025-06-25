@@ -1,5 +1,4 @@
-# SecScanVex.yml
-name: Trivy Scan with VEX
+name: Security Scan with VEX
 
 on:
   push:
@@ -12,35 +11,46 @@ permissions:
 
 jobs:
   trivy_scan:
+    name: "Trivy Vulnerability Scan"
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository
+      - name: "Checkout repository"
         uses: actions/checkout@v4
 
-      - name: Build Docker Image
-        run: |
-          docker build -t localbuild/trivyapptest:latest .
+      - name: "Set up Docker Buildx for caching"
+        uses: docker/setup-buildx-action@v3
 
-      - name: Create VEX directory (local files)
-        run: |
-          mkdir -p .vex
-          cp vex.json .vex/
-
-      - name: Run Trivy vulnerability scan with VEX
-        uses: aquasecurity/trivy-action@0.21.0
+      - name: "Build Docker image with cache"
+        uses: docker/build-push-action@v5
         with:
+          context: .
+          # Load the image into the local Docker daemon
+          load: true
+          # A tag is required for the trivy-action to reference the image
+          tags: localbuild/trivyapptest:latest
+          # Enable caching to speed up subsequent builds
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: "Run Trivy scan with VEX filter"
+        # Using @master gets the latest Trivy scanner version and vulnerability database.
+        uses: aquasecurity/trivy-action@master
+        with:
+          # Required inputs
           scan-type: "image"
           image-ref: "localbuild/trivyapptest:latest"
-          trivy-config: ".github/trivy/trivy.yaml"
           format: "sarif"
           output: "trivy-results.sarif"
-          exit-code: "0" # Exit code 0 to prevent failure on vulnerabilities
-          severity: "CRITICAL,HIGH,MEDIUM,LOW" # Filter by severity before VEX
-          ignore-unfixed: false # Ignore unfixed vulnerabilities
 
-      - name: Upload Trivy scan results to GitHub Security tab
-        if: always()
+          vex: "vex.json"
+
+          severity: "CRITICAL,HIGH,MEDIUM,LOW"
+          ignore-unfixed: false
+          # exit-code 0 ensures the workflow continues to the upload step
+          # even if vulnerabilities are found.
+          exit-code: 0
+
+      - name: "Upload Trivy scan results to Security tab"
         uses: github/codeql-action/upload-sarif@v3
         with:
           sarif_file: "trivy-results.sarif"
-          # category: "trivy-vex-scan" # Uncomment this line if you want to use categories
