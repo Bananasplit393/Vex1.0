@@ -32,6 +32,9 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
+      - name: "List files in the repository"
+        run: ls -R
+
       - name: "Run Trivy scan with VEX filter"
         uses: aquasecurity/trivy-action@master
         with:
