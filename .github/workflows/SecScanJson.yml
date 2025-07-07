@@ -37,12 +37,10 @@ jobs:
       - name: Run Trivy Scan
         run: |
           trivy image \
-            --format sarif \
-            --output trivy-results.sarif \
             --show-suppressed \
             --vex ./vex.json \
             --exit-code 1 \
-            --severity HIGH,CRITICAL \
+            --severity LOW, MEDIUM, HIGH,CRITICAL \
             ${{ env.IMAGE_NAME }}
 
       - name: Upload Trivy scan results to Security tab
