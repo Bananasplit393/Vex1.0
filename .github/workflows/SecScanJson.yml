@@ -35,10 +35,12 @@ jobs:
           trivy --version
 
       - name: Run Trivy Scan
+        continue-on-error: true
         run: |
           trivy image \
             --show-suppressed \
             --vex ./vex.json \
+            --exit-code 1 \
             --severity LOW, MEDIUM, HIGH,CRITICAL \
             ${{ env.IMAGE_NAME }}
 
