@@ -38,6 +38,7 @@ jobs:
         continue-on-error: true
         run: |
           trivy image \
+            --format table \
             --show-suppressed \
             --vex ./vex.json \
             --exit-code 1 \
