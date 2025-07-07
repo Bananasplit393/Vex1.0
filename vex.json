@@ -8,7 +8,11 @@
 			"vulnerability": {
 				"@id": "CVE-2024-21907"
 			},
-			"products": ["pkg:generic/trivyapptest@latest"],
+			"products": [
+				{
+					"@id": "pkg:generic/trivyapptest@latest"
+				}
+			],
 			"status": "not_affected",
 			"justification": "vulnerable_code_not_in_execute_path",
 			"impact_statement": "Our application uses Newtonsoft.Json for basic object serialization and does not use the JsonConvert.DeserializeObject method in a way that is exposed to the crafted data described in the vulnerability. A manual code review confirmed the vulnerable code path is not reachable."
