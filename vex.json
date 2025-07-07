@@ -5,7 +5,9 @@
 	"version": 1,
 	"statements": [
 		{
-			"vulnerability": "CVE-2024-21907",
+			"vulnerability": {
+				"@id": "CVE-2024-21907"
+			},
 			"products": ["pkg:generic/trivyapptest@latest"],
 			"status": "not_affected",
 			"justification": "vulnerable_code_not_in_execute_path",
