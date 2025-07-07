@@ -33,10 +33,8 @@ jobs:
           cache-to: type=gha,mode=max
 
       - name: "Run Trivy scan with VEX filter"
-        # Using @master gets the latest Trivy scanner version and vulnerability database.
         uses: aquasecurity/trivy-action@master
         with:
-          # Required inputs
           scan-type: "image"
           image-ref: "localbuild/trivyapptest:latest"
           format: "sarif"
