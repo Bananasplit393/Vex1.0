@@ -9,4 +9,4 @@ vulnerability:
     - MEDIUM
     - LOW
 
-  ignore-unfixed: false #æasjhæfdjhæa
+  ignore-unfixed: false
