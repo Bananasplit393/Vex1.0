@@ -1,0 +1,59 @@
+name: Manual Build and Scan with Trivy
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+
+env:
+  TRIVY_VERSION: 0.52.0
+  # Define the image name to use across steps
+  IMAGE_NAME: localbuild/trivyapptest:latest
+
+jobs:
+  build_and_scan:
+    name: Build, Scan and Report
+    runs-on: ubuntu-latest
+
+    permissions:
+      security-events: write # Required to upload SARIF results
+      contents: read
+      actions: read
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Build local Docker image
+        run: |
+          docker build -t ${{ env.IMAGE_NAME }} .
+
+      - name: Install Trivy
+        run: |
+          curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- -b /usr/local/bin v${{ env.TRIVY_VERSION }}
+          trivy --version
+
+      - name: Run Trivy Scan
+        run: |
+          trivy image \
+            --format sarif \
+            --output trivy-results.sarif \
+            --show-suppressed \
+            --vex ./vex.json \
+            --exit-code 1 \
+            --severity HIGH,CRITICAL \
+            ${{ env.IMAGE_NAME }}
+
+      - name: Upload Trivy scan results to Security tab
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: "trivy-results.sarif"
+
+      - name: Run Diagnostic Trivy Scan in JSON format
+        # This step is useful for debugging if needed
+        if: always() # Ensures this runs even if the previous step fails
+        run: |
+          trivy image \
+            --format json \
+            ${{ env.IMAGE_NAME }}
