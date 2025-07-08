@@ -38,12 +38,17 @@ jobs:
         continue-on-error: true
         run: |
           trivy image \
-            --format sarif \
-            --output trivy-results.sarif \
             --show-suppressed \
             --vex ./vex.json \
             --exit-code 1 \
             --severity LOW, MEDIUM, HIGH,CRITICAL \
+            ${{ env.IMAGE_NAME }}
+
+      - name: Run Diagnostic Trivy Scan in JSON format
+        run: |
+          trivy image \
+            --format json \
+            --output trivy-results.json \
             ${{ env.IMAGE_NAME }}
 
       - name: Upload Trivy scan results to Security tab
