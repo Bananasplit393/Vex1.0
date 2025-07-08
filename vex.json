@@ -1,21 +1,18 @@
 {
-	"@context": "https://openvex.dev/ns/v0.2.0",
-	"author": "Chris Dakota",
-	"timestamp": "2025-07-07T12:36:00.000Z",
+	"bomFormat": "CycloneDX",
+	"specVersion": "1.5",
 	"version": 1,
-	"statements": [
+	"vulnerabilities": [
 		{
-			"vulnerability": {
-				"@id": "CVE-2024-21907"
+			"id": "CVE-2024-21907",
+			"source": {
+				"name": "NVD"
 			},
-			"products": [
-				{
-					"@id": "pkg:generic/trivyapptest@latest"
-				}
-			],
-			"status": "not_affected",
-			"justification": "vulnerable_code_not_in_execute_path",
-			"impact_statement": "Our application uses Newtonsoft.Json for basic object serialization and does not use the JsonConvert.DeserializeObject method in a way that is exposed to the crafted data described in the vulnerability. A manual code review confirmed the vulnerable code path is not reachable."
+			"analysis": {
+				"status": "not_affected",
+				"justification": "vulnerable_code_not_in_execute_path",
+				"detail": "A detailed reason why this is not relevant."
+			}
 		}
 	]
 }
