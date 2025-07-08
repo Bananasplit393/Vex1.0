@@ -38,7 +38,8 @@ jobs:
         continue-on-error: true
         run: |
           trivy image \
-            --format table \
+            --format sarif \
+            --output trivy-results.sarif \
             --show-suppressed \
             --vex ./vex.json \
             --exit-code 1 \
