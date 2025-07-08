@@ -1,0 +1,8 @@
+{
+	"@context": "https://openvex.dev/ns/v0.2.0",
+	"@id": "https://example.com/vex/openvex.json",
+	"author": "Chris D",
+	"timestamp": "2025-07-01T11:15:00Z",
+	"version": 1,
+	"statements": [{}]
+}

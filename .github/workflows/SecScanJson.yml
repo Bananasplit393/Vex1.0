@@ -1,4 +1,4 @@
-name: Manual Build and Scan with Trivy
+name: Build and Scan with Trivy
 
 on:
   push:
@@ -8,64 +8,53 @@ on:
 
 env:
   TRIVY_VERSION: 0.52.0
-  # Define the image name to use across steps
-  IMAGE_NAME: localbuild/trivyapptest:latest
+  # ghcr.io = GitHub Container Registry.
+  # GITHUB_REPOSITORY is a default environment variable, e.g., "my-org/my-repo".
+  DOCKER_IMAGE: ghcr.io/${{ github.repository }}
 
 jobs:
   build_and_scan:
-    name: Build, Scan and Report
+    name: Build, Scan and report
     runs-on: ubuntu-latest
 
     permissions:
-      security-events: write # Required to upload SARIF results
+      security-events: write
       contents: read
       actions: read
+      # Required to push to GitHub Container Registry
+      packages: write
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Build local Docker image
-        run: |
-          docker build -t ${{ env.IMAGE_NAME }} .
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Install Trivy
+      - name: Build Docker image
+        id: build-and-push # Give this step an ID to reference its outputs
+        uses: docker/build-push-action@v6
+        with:
+          context: . # Assumes Dockerfile is in the root
+          push: true # Push the image to the registry
+          tags: ${{ env.DOCKER_IMAGE }}:${{ github.sha }}
+
+      - name: Install trivy
         run: |
           curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- -b /usr/local/bin v${{ env.TRIVY_VERSION }}
           trivy --version
 
-      - name: Run Trivy Scan
-        continue-on-error: true
+      - name: Run trivy scan
         run: |
-          trivy image \
-            --show-suppressed \
-            --vex ./vex.json \
-            --exit-code 1 \
-            --severity LOW,MEDIUM,HIGH,CRITICAL \
-            ${{ env.IMAGE_NAME }}
+          # Scan the image using the specific digest from the build step for accuracy
+          trivy image --show-suppressed --exit-code 1 --severity HIGH,CRITICAL ${{ steps.build-and-push.outputs.digest }}
 
       - name: Run Diagnostic Trivy Scan in JSON format
         run: |
           trivy image \
             --format json \
-            --output trivy-results.json \
-            ${{ env.IMAGE_NAME }}
-
-      - name: Convert Trivy JSON to Table Format
-        run: |
-          jq -r '.Results[] | .Vulnerabilities[] | [.VulnerabilityID, .PkgName, .InstalledVersion, .FixedVersion, .Severity] | @tsv' trivy-results.json > trivy-results-table.txt
-          cat trivy-results-table.txt
-
-      # Invalid format, should be sarif
-      # - name: Upload Trivy scan results to Security tab
-      #   uses: github/codeql-action/upload-sarif@v3
-      #   with:
-      #     json_file: "trivy-results.json"
-
-      - name: Run Diagnostic Trivy Scan in JSON format
-        # This step is useful for debugging if needed
-        if: always() # Ensures this runs even if the previous step fails
-        run: |
-          trivy image \
-            --format json \
-            ${{ env.IMAGE_NAME }}
+            ${{ steps.build-and-push.outputs.digest }} > trivy-results.json
