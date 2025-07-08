@@ -8,8 +8,6 @@ on:
 
 env:
   TRIVY_VERSION: 0.52.0
-  # ghcr.io = GitHub Container Registry.
-  # GITHUB_REPOSITORY is a default environment variable, e.g., "my-org/my-repo".
   DOCKER_IMAGE: ghcr.io/${{ github.repository }}
 
 jobs:
@@ -21,7 +19,6 @@ jobs:
       security-events: write
       contents: read
       actions: read
-      # Required to push to GitHub Container Registry
       packages: write
 
     steps:
@@ -35,12 +32,12 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Build Docker image
-        id: build-and-push # Give this step an ID to reference its outputs
+      - name: Build and Push Docker image
+        id: build-and-push
         uses: docker/build-push-action@v6
         with:
-          context: . # Assumes Dockerfile is in the root
-          push: true # Push the image to the registry
+          context: .
+          push: true
           tags: ${{ env.DOCKER_IMAGE }}:${{ github.sha }}
 
       - name: Install trivy
@@ -48,19 +45,14 @@ jobs:
           curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- -b /usr/local/bin v${{ env.TRIVY_VERSION }}
           trivy --version
 
-      - name: Log in to GitHub Container Registry
-        uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Run trivy scan
+      - name: Run trivy scan to test VEX file
         run: |
-          trivy image --show-suppressed --vex ./openvex.json --exit-code 0 --severity HIGH,CRITICAL ${{ env.DOCKER_IMAGE }}:${{ github.sha }}
+          # Use exit-code 1 to fail if VEX doesn't work.
+          trivy image --show-suppressed --vex ./openvex.json --exit-code 1 --severity HIGH,CRITICAL ${{ env.DOCKER_IMAGE }}:${{ github.sha }}
 
       - name: Run Diagnostic Trivy Scan in JSON format
         run: |
+          # Use the image tag here as well so Trivy can pull it from the registry.
           trivy image \
             --format json \
-            ${{ steps.build-and-push.outputs.digest }} > trivy-results.json
+            ${{ env.DOCKER_IMAGE }}:${{ github.sha }} > trivy-results.json
