@@ -7,7 +7,7 @@
 	"statements": [
 		{
 			"vulnerability": { "name": "CVE-2024-21907" },
-			"products": [{ "@id": "pkg:dotnet/Newtonsoft.Json@12.0.1" }],
+			"products": [{ "@id": "pkg:nuget/Newtonsoft.Json@12.0.1" }],
 			"status": "not_affected",
 			"justification": "code_not_reachable"
 		}

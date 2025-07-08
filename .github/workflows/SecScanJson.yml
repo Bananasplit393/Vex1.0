@@ -47,7 +47,6 @@ jobs:
 
       - name: Run trivy scan to test VEX file
         run: |
-          # Use exit-code 1 to fail if VEX doesn't work.
           trivy image --show-suppressed --vex ./openvex.json --exit-code 1 --severity HIGH,CRITICAL ${{ env.DOCKER_IMAGE }}:${{ github.sha }}
 
       - name: Run Diagnostic Trivy Scan in JSON format
