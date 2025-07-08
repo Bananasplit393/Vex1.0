@@ -65,8 +65,12 @@ jobs:
             --format json \
             ${{ env.DOCKER_IMAGE }}:${{ github.sha }} > trivy-results.json
 
+      # - name: Filter suppressed vulnerabilities
+      #   run: |
+      #     jq 'del(.runs[].results[] | select(.suppressions != null))' trivy-results.sarif > trivy-filtered.sarif
+
       - name: Upload Trivy scan results to GitHub Security tab
         if: always()
         uses: github/codeql-action/upload-sarif@v3
         with:
-          sarif_file: "trivy-results.sarif"
+          sarif_file: "trivy-filtered.sarif"
