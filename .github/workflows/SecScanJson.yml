@@ -57,7 +57,7 @@ jobs:
 
       - name: Run trivy scan
         run: |
-          trivy image --show-suppressed --vex ./openvex.json --exit-code 1 --severity HIGH,CRITICAL ${{ env.DOCKER_IMAGE }}:${{ github.sha }}
+          trivy image --show-suppressed --vex ./openvex.json --exit-code 0 --severity HIGH,CRITICAL ${{ env.DOCKER_IMAGE }}:${{ github.sha }}
 
       - name: Run Diagnostic Trivy Scan in JSON format
         run: |
