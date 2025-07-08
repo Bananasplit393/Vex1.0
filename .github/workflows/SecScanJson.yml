@@ -41,7 +41,7 @@ jobs:
             --show-suppressed \
             --vex ./vex.json \
             --exit-code 1 \
-            --severity LOW, MEDIUM, HIGH,CRITICAL \
+            --severity LOW,MEDIUM,HIGH,CRITICAL \
             ${{ env.IMAGE_NAME }}
 
       - name: Run Diagnostic Trivy Scan in JSON format
