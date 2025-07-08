@@ -1,4 +1,4 @@
-name: Build and Scan with Trivy
+name: Build, Upload Sarif with Trivy Scan
 
 on:
   push:
@@ -45,9 +45,16 @@ jobs:
           curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- -b /usr/local/bin v${{ env.TRIVY_VERSION }}
           trivy --version
 
-      - name: Run trivy scan to test VEX file
+      - name: Run Trivy scan and upload SARIF results
         run: |
-          trivy image --show-suppressed --vex ./openvex.json --exit-code 1 --severity HIGH,CRITICAL ${{ env.DOCKER_IMAGE }}:${{ github.sha }}
+          trivy image \
+          --format sarif \
+          --output trivy-results.sarif \
+          --show-suppressed \
+          --vex ./openvex.json \
+          --exit-code 1 \
+          --severity MEDIUM,HIGH,CRITICAL \
+          ${{ env.DOCKER_IMAGE }}:${{ github.sha }}
 
       - name: Run Diagnostic Trivy Scan in JSON format
         run: |
@@ -55,3 +62,9 @@ jobs:
           trivy image \
             --format json \
             ${{ env.DOCKER_IMAGE }}:${{ github.sha }} > trivy-results.json
+
+      - name: Upload Trivy scan results to GitHub Security tab
+        if: always()
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: "trivy-results.sarif"
