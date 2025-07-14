@@ -72,9 +72,9 @@ jobs:
             --format json \
             ${{ env.DOCKER_IMAGE }}:${{ github.sha }} > trivy-results.json
 
-      - name: Filter suppressed vulnerabilities
-        run: |
-          jq 'del(.runs[].results[] | select(.suppressions != null))' trivy-results.sarif > trivy-filtered.sarif
+      # - name: Filter suppressed vulnerabilities
+      #   run: |
+      #     jq 'del(.runs[].results[] | select(.suppressions != null))' trivy-results.sarif > trivy-filtered.sarif
 
       # - name: Upload Trivy scan results to GitHub Security tab
       #   if: always()
@@ -88,5 +88,5 @@ jobs:
         with:
           name: trivy-scan-reports
           path: |
-            trivy-full-report.json
+            trivy-results.json
             vulnerabilities-table.json
