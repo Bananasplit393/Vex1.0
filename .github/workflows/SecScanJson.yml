@@ -55,7 +55,6 @@ jobs:
           --show-suppressed \
           --vex ./openvex.json \
           --exit-code 0 \
-          --severity HIGH,CRITICAL \
           ${{ env.DOCKER_IMAGE }}:${{ github.sha }}
 
       - name: Create table of all known vulnerabilities (including suppressed)
