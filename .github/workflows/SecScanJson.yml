@@ -47,21 +47,21 @@ jobs:
           curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- -b /usr/local/bin v${{ env.TRIVY_VERSION }}
           trivy --version
 
-      # - name: Run Trivy scan and generate SARIF results
-      #   run: |
-      #     trivy image \
-      #     --format sarif \
-      #     --output trivy-results.sarif \
-      #     --show-suppressed \
-      #     --vex ./openvex.json \
-      #     --exit-code 1 \
-      #     --severity HIGH,CRITICAL \
-      #     ${{ env.DOCKER_IMAGE }}:${{ github.sha }}
+      - name: Run Trivy scan and generate SARIF results
+        run: |
+          trivy image \
+          --format json \
+          --output trivy-results.json \
+          --show-suppressed \
+          --vex ./openvex.json \
+          --exit-code 1 \
+          --severity HIGH,CRITICAL \
+          ${{ env.DOCKER_IMAGE }}:${{ github.sha }}
 
       - name: Create JSON table from vulnerabilities
         id: create_json
         run: |
-          jq '[.Results[].Vulnerabilities[]? | select(.VulnerabilityID != null) | {package: .PkgName, cve: .VulnerabilityID, version: .InstalledVersion, severity: .Severity}]' trivy-full-report.json > vulnerabilities-table.json
+          jq '[.Results[].Vulnerabilities[]? | select(.VulnerabilityID != null) | {package: .PkgName, cve: .VulnerabilityID, version: .InstalledVersion, severity: .Severity}]' trivy-results.json > vulnerabilities-table.json
           echo "JSON table created: vulnerabilities-table.json"
           cat vulnerabilities-table.json
 
