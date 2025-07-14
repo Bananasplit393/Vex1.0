@@ -7,7 +7,7 @@ on:
     branches: ["main"]
 
 env:
-  TRIVY_VERSION: 0.52.0
+  TRIVY_VERSION: 0.64.1
   DOCKER_IMAGE: ghcr.io/${{ github.repository }}
 
 jobs:
