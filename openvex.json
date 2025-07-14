@@ -10,6 +10,12 @@
 			"products": [{ "@id": "pkg:nuget/Newtonsoft.Json@12.0.1" }],
 			"status": "not_affected",
 			"justification": "code_not_reachable"
+		},
+		{
+			"vulnerability": { "name": "CVE-2021-26701" },
+			"products": [{ "@id": "pkg:nuget/System.Text.Encodings.Web@4.7.1" }],
+			"status": "not_affected",
+			"justification": "code_not_reachable"
 		}
 	]
 }
