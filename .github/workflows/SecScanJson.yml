@@ -50,6 +50,7 @@ jobs:
       - name: Run Trivy scan and generate SARIF results
         run: |
           trivy image \
+          --debug \
           --format json \
           --output trivy-results.json \
           --show-suppressed \
