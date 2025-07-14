@@ -74,6 +74,13 @@ jobs:
           echo "JSON table created: vulnerabilities-table.json"
           cat vulnerabilities-table.json
 
+          echo ""
+          echo "--- Formatted Visual Table ---"
+          jq -r '
+          (.[0] | keys_unsorted | (map(.) | @tsv)),
+          (.[] | to_entries | (map(.value) | @tsv))
+          ' vulnerabilities-table.json | column -t -s $'\t'
+
       # - name: Filter suppressed vulnerabilities
       #   run: |
       #     jq 'del(.runs[].results[] | select(.suppressions != null))' trivy-results.sarif > trivy-filtered.sarif
