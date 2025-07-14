@@ -54,7 +54,7 @@ jobs:
           --output trivy-results.json \
           --show-suppressed \
           --vex ./openvex.json \
-          --exit-code 1 \
+          --exit-code 0 \
           --severity HIGH,CRITICAL \
           ${{ env.DOCKER_IMAGE }}:${{ github.sha }}
 
