@@ -62,9 +62,15 @@ jobs:
         id: create_json
         run: |
           jq '[
-            (.Results[].Vulnerabilities[]? | select(.VulnerabilityID != null) | {package: .PkgName, cve: .VulnerabilityID, version: .InstalledVersion, severity: .Severity, status: "active"}),
-            (.Results[].Misconfigurations[]? | select(.Type == "VEX") | {package: .ID, cve: .Title, version: .Description, severity: .Severity, status: .Status})
-          ] | flatten' trivy-results.json > vulnerabilities-table.json
+            .Results[].Vulnerabilities[]? | select(.VulnerabilityID != null) | 
+            {
+              package: .PkgName, 
+              cve: .VulnerabilityID, 
+              version: .InstalledVersion, 
+              severity: .Severity, 
+              status: (if .VexStatus and .VexStatus != "" then .VexStatus else "active" end)
+            }
+          ]' trivy-results.json > vulnerabilities-table.json
 
           echo "JSON table created: vulnerabilities-table.json"
           cat vulnerabilities-table.json
