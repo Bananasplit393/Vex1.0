@@ -1,39 +1,48 @@
 {
-	"$schema": "http://cyclonedx.org/schema/bom-1.6.schema.json",
+	"$schema": "http://cyclonedx.org/schema/bom-1.5.schema.json",
 	"bomFormat": "CycloneDX",
-	"specVersion": "1.6",
-	"serialNumber": "urn:uuid:9731d2de-3dd7-4cf6-a175-bd21ef218f6d",
+	"specVersion": "1.5",
+	"serialNumber": "urn:uuid:3e671687-395b-41f5-a30f-a58921a69b79",
 	"version": 1,
 	"metadata": {
-		"timestamp": "2025-06-25T13:17:11+00:00",
-		"tools": {
-			"components": [
-				{
-					"type": "application",
-					"group": "aquasecurity",
-					"name": "trivy",
-					"version": "0.63.0"
-				}
-			]
-		},
+		"timestamp": "2025-07-14T12:45:00Z",
+		"tools": [
+			{
+				"vendor": "aquasecurity",
+				"name": "trivy",
+				"version": "0.64.1"
+			}
+		],
 		"component": {
-			"bom-ref": "0d978aa4-74cc-4f08-a73f-4a0d9ee6ec9f",
+			"bom-ref": "pkg:oci/vex1.0@sha256:f29d63b6db93b139610265693d047a1e03a1141da7313833a6f7564015516249?repository_url=ghcr.io/bananasplit393/vex1.0",
 			"type": "application",
-			"name": ".",
-			"properties": [
-				{
-					"name": "aquasecurity:trivy:SchemaVersion",
-					"value": "2"
-				}
-			]
+			"name": "ghcr.io/bananasplit393/vex1.0",
+			"version": "sha256:f29d63b6db93b139610265693d047a1e03a1141da7313833a6f7564015516249"
 		}
 	},
-	"components": [],
-	"dependencies": [
+	"components": [
 		{
-			"ref": "0d978aa4-74cc-4f08-a73f-4a0d9ee6ec9f",
-			"dependsOn": []
+			"bom-ref": "pkg:nuget/Newtonsoft.Json@12.0.1",
+			"type": "library",
+			"name": "Newtonsoft.Json",
+			"version": "12.0.1",
+			"purl": "pkg:nuget/Newtonsoft.Json@12.0.1"
+		},
+		{
+			"bom-ref": "pkg:nuget/System.Text.Encodings.Web@4.7.1",
+			"type": "library",
+			"name": "System.Text.Encodings.Web",
+			"version": "4.7.1",
+			"purl": "pkg:nuget/System.Text.Encodings.Web@4.7.1"
 		}
 	],
-	"vulnerabilities": []
+	"dependencies": [
+		{
+			"ref": "pkg:oci/vex1.0@sha256:f29d63b6db93b139610265693d047a1e03a1141da7313833a6f7564015516249?repository_url=ghcr.io/bananasplit393/vex1.0",
+			"dependsOn": [
+				"pkg:nuget/Newtonsoft.Json@12.0.1",
+				"pkg:nuget/System.Text.Encodings.Web@4.7.1"
+			]
+		}
+	]
 }
