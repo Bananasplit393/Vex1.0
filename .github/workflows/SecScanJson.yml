@@ -58,19 +58,16 @@ jobs:
           --severity HIGH,CRITICAL \
           ${{ env.DOCKER_IMAGE }}:${{ github.sha }}
 
-      - name: Create JSON table from vulnerabilities
+      - name: Create table of all known vulnerabilities (including suppressed)
         id: create_json
         run: |
-          jq '[.Results[].Vulnerabilities[]? | select(.VulnerabilityID != null) | {package: .PkgName, cve: .VulnerabilityID, version: .InstalledVersion, severity: .Severity}]' trivy-results.json > vulnerabilities-table.json
+          jq '[
+            (.Results[].Vulnerabilities[]? | select(.VulnerabilityID != null) | {package: .PkgName, cve: .VulnerabilityID, version: .InstalledVersion, severity: .Severity, status: "active"}),
+            (.Results[].Misconfigurations[]? | select(.Type == "VEX") | {package: .ID, cve: .Title, version: .Description, severity: .Severity, status: .Status})
+          ] | flatten' trivy-results.json > vulnerabilities-table.json
+
           echo "JSON table created: vulnerabilities-table.json"
           cat vulnerabilities-table.json
-
-      - name: Run Diagnostic Trivy Scan in JSON format
-        run: |
-          # Use the image tag here as well so Trivy can pull it from the registry.
-          trivy image \
-            --format json \
-            ${{ env.DOCKER_IMAGE }}:${{ github.sha }} > trivy-results.json
 
       # - name: Filter suppressed vulnerabilities
       #   run: |
