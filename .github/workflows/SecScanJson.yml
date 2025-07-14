@@ -57,6 +57,16 @@ jobs:
           --exit-code 0 \
           ${{ env.DOCKER_IMAGE }}:${{ github.sha }}
 
+      - name: Debug PURL Mismatch
+        if: always()
+        run: |
+          echo "---"
+          echo "DEBUGGING PURL FOR Newtonsoft.Json:"
+          echo "Copy the PURL and update openvex.json file."
+          echo "---"
+          jq '.Results[].Vulnerabilities[]? | select(.PkgName == "Newtonsoft.Json") | .PkgIdentifier' trivy-results.json
+          echo "---"
+
       - name: Create table of all known vulnerabilities (including suppressed)
         id: create_json
         run: |
