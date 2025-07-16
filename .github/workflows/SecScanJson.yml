@@ -47,22 +47,22 @@ jobs:
           curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- -b /usr/local/bin v${{ env.TRIVY_VERSION }}
           trivy --version
 
-      - name: Generate Software Bill of Materials (SBOM)
-        run: |
-          trivy image \
-            --format cyclonedx \
-            --output sbom.json \
-            ${{ env.DOCKER_IMAGE }}:${{ github.sha }}
+      # - name: Generate Software Bill of Materials (SBOM)
+      #   run: |
+      #     trivy image \
+      #       --format cyclonedx \
+      #       --output sbom.json \
+      #       ${{ env.DOCKER_IMAGE }}:${{ github.sha }}
 
-      - name: Scan SBOM and apply VEX
-        run: |
-          trivy sbom \
-          --format json \
-          --output trivy-results.json \
-          --show-suppressed \
-          --vex ./openvex.json \
-          sbom.json
-          echo "SBOM scan completed and results saved to trivy-results.json"
+      # - name: Scan SBOM and apply VEX
+      #   run: |
+      #     trivy sbom \
+      #     --format json \
+      #     --output trivy-results.json \
+      #     --show-suppressed \
+      #     --vex ./openvex.json \
+      #     sbom.json
+      #     echo "SBOM scan completed and results saved to trivy-results.json"
 
       - name: Run trivy scan to test VEX file (Old)
         run: |
