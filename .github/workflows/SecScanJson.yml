@@ -47,52 +47,32 @@ jobs:
           curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- -b /usr/local/bin v${{ env.TRIVY_VERSION }}
           trivy --version
 
-      # - name: Generate Software Bill of Materials (SBOM)
-      #   run: |
-      #     trivy image \
-      #       --format cyclonedx \
-      #       --output sbom.json \
-      #       ${{ env.DOCKER_IMAGE }}:${{ github.sha }}
+      - name: Generate Software Bill of Materials (SBOM)
+        run: |
+          trivy image \
+            --format cyclonedx \
+            --output sbom.json \
+            ${{ env.DOCKER_IMAGE }}:${{ github.sha }}
 
-      # - name: Scan SBOM and apply VEX
-      #   run: |
-      #     trivy sbom \
-      #     --format json \
-      #     --output trivy-results.json \
-      #     --show-suppressed \
-      #     --vex ./openvex.json \
-      #     sbom.json
-      #     echo "SBOM scan completed and results saved to trivy-results.json"
+      - name: Scan SBOM and apply VEX
+        run: |
+          trivy sbom \
+          --format json \
+          --output trivy-results.json \
+          --show-suppressed \
+          --vex ./openvex.json \
+          sbom.json
+          echo "SBOM scan completed and results saved to trivy-results.json"
 
-      - name: Run trivy scan to test VEX file (Old)
-        run: >-
-          trivy image 
-          --show-suppressed 
-          --vex ./openvex.json 
-          --exit-code 0 
-          --severity HIGH,CRITICAL 
-          ${{ env.DOCKER_IMAGE }}:${{ github.sha }}
-
-      # - name: Run Trivy scan and generate result file
-      #   run: |
-      #     trivy image \
-      #         --debug \
-      #         --format json \
-      #         --output trivy-results.json \
-      #         --show-suppressed \
-      #         --vex ./openvex.json \
-      #         --exit-code 0 \
-      #         ${{ env.DOCKER_IMAGE }}:${{ github.sha }}
-
-      # - name: Debug PURL Mismatch
-      #   if: always()
-      #   run: |
-      #     echo "---"
-      #     echo "DEBUGGING PURL FOR Newtonsoft.Json:"
-      #     echo "Copy the PURL and update openvex.json file."
-      #     echo "---"
-      #     jq '.Results[].Vulnerabilities[]? | select(.PkgName == "Newtonsoft.Json") | .PkgIdentifier' trivy-results.json
-      #     echo "---"
+      - name: Debug PURL Mismatch
+        if: always()
+        run: |
+          echo "---"
+          echo "DEBUGGING PURL FOR Newtonsoft.Json:"
+          echo "PURL from SBOM:"
+          echo "---"
+          jq '.Results[].Vulnerabilities[]? | select(.PkgName == "Newtonsoft.Json") | .PkgIdentifier' trivy-results.json
+          echo "---"
 
       # - name: Create and display vulnerability table
       #   id: create_table
