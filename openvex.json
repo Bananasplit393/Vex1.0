@@ -1,7 +1,7 @@
 {
 	"@context": "https://openvex.dev/ns/v0.2.0",
 	"@id": "https://example.com/vex/your-app-vex-id",
-	"author": "Your Name",
+	"author": "Chris Dolan",
 	"timestamp": "2025-07-16T14:00:00Z",
 	"version": 1,
 	"statements": [

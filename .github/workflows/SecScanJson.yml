@@ -47,10 +47,6 @@ jobs:
           curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- -b /usr/local/bin v${{ env.TRIVY_VERSION }}
           trivy --version
 
-      - name: Scan for VEX Statements
-        run: |
-          trivy image --scanners vuln --format json ${{ env.DOCKER_IMAGE }}:${{ github.sha }} > openvex-template.json
-
       - name: Scan for Log Output and Fail on Critical/High Vulnerabilities
         run: |
           trivy image \
@@ -69,20 +65,6 @@ jobs:
             --format json \
             --output trivy-results.json \
             ${{ env.DOCKER_IMAGE }}:${{ github.sha }}
-
-      - name: Debug and Verify VEX Application PURL Mismatch
-        if: always()
-        run: |
-          echo "---"
-          echo "DEBUGGING VEX PURL MISMATCH"
-          echo "---"
-          echo "PURL for Newtonsoft.Json FROM VEX FILE:"
-          jq '.statements[] | select(.vulnerability.name == "CVE-2024-21907") | .products[]."@id"' openvex.json
-          echo "---"
-          echo "PURL for Newtonsoft.Json FROM TRIVY SCAN RESULTS:"
-          jq '.Results[].Vulnerabilities[]? | select(.PkgName == "Newtonsoft.Json") | .PkgIdentifier' trivy-results.json
-          echo "---"
-          echo "Ensure the two PURLs above match EXACTLY."
 
       - name: Create and display vulnerability table
         id: create_table
