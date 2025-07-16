@@ -73,16 +73,16 @@ jobs:
             --severity HIGH,CRITICAL \
             ${{ env.DOCKER_IMAGE }}:${{ github.sha }}
 
-      - name: Run Trivy scan and generate result file
-        run: |
-          trivy image \
-              --debug \
-              --format json \
-              --output trivy-results.json \
-              --show-suppressed \
-              --vex ./openvex.json \
-              --exit-code 0 \
-              ${{ env.DOCKER_IMAGE }}:${{ github.sha }}
+      # - name: Run Trivy scan and generate result file
+      #   run: |
+      #     trivy image \
+      #         --debug \
+      #         --format json \
+      #         --output trivy-results.json \
+      #         --show-suppressed \
+      #         --vex ./openvex.json \
+      #         --exit-code 0 \
+      #         ${{ env.DOCKER_IMAGE }}:${{ github.sha }}
 
       - name: Debug PURL Mismatch
         if: always()
