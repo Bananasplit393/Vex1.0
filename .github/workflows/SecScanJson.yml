@@ -63,19 +63,19 @@ jobs:
           --vex ./openvex.json 
           sbom.json
 
-      - name: Display Trivy scan results
-        run: |
-          cat trivy-results.json | jq '.Results[] | {PackageName: .PkgName, Vulnerabilities: .Vulnerabilities | length, VexStatus: .VexStatus}'
-
-      - name: Debug PURL Mismatch
+      - name: Debug and Verify VEX Application
         if: always()
         run: |
           echo "---"
-          echo "DEBUGGING PURL FOR Newtonsoft.Json:"
-          echo "PURL from SBOM:"
+          echo "DEBUGGING VEX PURL MISMATCH"
           echo "---"
+          echo "PURL for Newtonsoft.Json FROM VEX FILE:"
+          jq '.statements[] | select(.vulnerability.name == "CVE-2024-21907") | .products[]."@id"' openvex.json
+          echo "---"
+          echo "PURL for Newtonsoft.Json FROM TRIVY SCAN RESULTS:"
           jq '.Results[].Vulnerabilities[]? | select(.PkgName == "Newtonsoft.Json") | .PkgIdentifier' trivy-results.json
           echo "---"
+          echo "Ensure the two PURLs above match EXACTLY."
 
       - name: Create and display vulnerability table
         id: create_table
