@@ -49,7 +49,7 @@ jobs:
 
       - name: Scan for VEX Statements
         run: |
-          trivy image --scanners vuln --format vex ${{ env.DOCKER_IMAGE }}:${{ github.sha }} > openvex-template.json
+          trivy image --scanners vuln --format json ${{ env.DOCKER_IMAGE }}:${{ github.sha }} > openvex-template.json
 
       - name: Scan for Log Output and Fail on Critical/High Vulnerabilities
         run: |
