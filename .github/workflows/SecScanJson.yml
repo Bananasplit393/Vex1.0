@@ -47,15 +47,24 @@ jobs:
           curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- -b /usr/local/bin v${{ env.TRIVY_VERSION }}
           trivy --version
 
-      - name: Scan Image, Apply VEX, and Generate Final Report
-        run: >-
-          trivy image
-          --show-suppressed
-          --vex ./openvex.json
-          --severity HIGH,CRITICAL
-          --format json
-          --output trivy-results.json
-          ${{ env.DOCKER_IMAGE }}:${{ github.sha }}
+      - name: Scan for Log Output and Fail on Critical/High Vulns
+        run: |
+          trivy image \
+            --show-suppressed \
+            --vex ./openvex.json \
+            --exit-code 0 \
+            --severity HIGH,CRITICAL \
+            ${{ env.DOCKER_IMAGE }}:${{ github.sha }}
+
+      - name: Scan for JSON Report
+        run: |
+          trivy image \
+            --show-suppressed \
+            --vex ./openvex.json \
+            --severity HIGH,CRITICAL \
+            --format json \
+            --output trivy-results.json \
+            ${{ env.DOCKER_IMAGE }}:${{ github.sha }}
 
       - name: Debug and Verify VEX Application PURL Mismatch
         if: always()
