@@ -137,6 +137,7 @@ jobs:
         with:
           name: trivy-scan-reports
           path: |
+            openvex-template.json
             trivy-results.json
             openvex.json
             vulnerabilities-table.json
