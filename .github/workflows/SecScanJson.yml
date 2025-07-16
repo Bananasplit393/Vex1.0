@@ -64,6 +64,10 @@ jobs:
           sbom.json
           echo "SBOM scan completed and results saved to trivy-results.json"
 
+      - name: Display Trivy scan results
+        run: |
+          cat trivy-results.json | jq '.Results[] | {PackageName: .PkgName, Vulnerabilities: .Vulnerabilities | length, VexStatus: .VexStatus}'
+
       - name: Debug PURL Mismatch
         if: always()
         run: |
