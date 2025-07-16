@@ -55,14 +55,13 @@ jobs:
             ${{ env.DOCKER_IMAGE }}:${{ github.sha }}
 
       - name: Scan SBOM and apply VEX
-        run: |
-          trivy sbom \
-          --format json \
-          --output trivy-results.json \
-          --show-suppressed \
-          --vex ./openvex.json \
+        run: >-
+          trivy sbom 
+          --format json 
+          --output trivy-results.json 
+          --show-suppressed 
+          --vex ./openvex.json 
           sbom.json
-          echo "SBOM scan completed and results saved to trivy-results.json"
 
       - name: Display Trivy scan results
         run: |
@@ -78,42 +77,42 @@ jobs:
           jq '.Results[].Vulnerabilities[]? | select(.PkgName == "Newtonsoft.Json") | .PkgIdentifier' trivy-results.json
           echo "---"
 
-      # - name: Create and display vulnerability table
-      #   id: create_table
-      #   run: |
-      #     # 1. Create the base JSON array of vulnerabilities
-      #     jq '[
-      #       .Results[].Vulnerabilities[]? | select(.VulnerabilityID != null) |
-      #       {
-      #         package: .PkgName,
-      #         cve: .VulnerabilityID,
-      #         version: .InstalledVersion,
-      #         severity: .Severity,
-      #         status: (if .VexStatus and .VexStatus != "" then .VexStatus else "active" end)
-      #       }
-      #     ]' trivy-results.json > vulnerabilities-table.json
+      - name: Create and display vulnerability table
+        id: create_table
+        run: |
+          # 1. Create the base JSON array of vulnerabilities
+          jq '[
+            .Results[].Vulnerabilities[]? | select(.VulnerabilityID != null) |
+            {
+              package: .PkgName,
+              cve: .VulnerabilityID,
+              version: .InstalledVersion,
+              severity: .Severity,
+              status: (if .VexStatus and .VexStatus != "" then .VexStatus else "active" end)
+            }
+          ]' trivy-results.json > vulnerabilities-table.json
 
-      #     echo "JSON table created: vulnerabilities-table.json ✅"
+          echo "JSON table created: vulnerabilities-table.json ✅"
 
-      #     # 2. Print a simple text table to the logs for quick viewing
-      #     echo ""
-      #     echo "--- Formatted Log Output ---"
-      #     jq -r '
-      #       (.[0] | keys_unsorted | (map(.) | @tsv)),
-      #       (.[] | to_entries | (map(.value) | @tsv))
-      #     ' vulnerabilities-table.json | column -t -s $'\t'
+          # 2. Print a simple text table to the logs for quick viewing
+          echo ""
+          echo "--- Formatted Log Output ---"
+          jq -r '
+            (.[0] | keys_unsorted | (map(.) | @tsv)),
+            (.[] | to_entries | (map(.value) | @tsv))
+          ' vulnerabilities-table.json | column -t -s $'\t'
 
-      #     # 3. Create a Markdown table and add it to the GitHub Job Summary
-      #     {
-      #       echo "### 🛡️ Trivy Vulnerability Report"
-      #       echo ""
-      #       jq -r '
-      #         (.|"| Package | CVE | Version | Severity | Status |"),
-      #         (.[] | "| \(.package) | \(.cve) | \(.version) | \(.severity) | \(.status) |")
-      #       ' vulnerabilities-table.json
-      #     } >> $GITHUB_STEP_SUMMARY
+          # 3. Create a Markdown table and add it to the GitHub Job Summary
+          {
+            echo "### 🛡️ Trivy Vulnerability Report"
+            echo ""
+            jq -r '
+              (.|"| Package | CVE | Version | Severity | Status |"),
+              (.[] | "| \(.package) | \(.cve) | \(.version) | \(.severity) | \(.status) |")
+            ' vulnerabilities-table.json
+          } >> $GITHUB_STEP_SUMMARY
 
-      #     echo "Markdown table added to Job Summary ✅"
+          echo "Markdown table added to Job Summary ✅"
 
       # - name: Filter suppressed vulnerabilities
       #   run: |
