@@ -47,7 +47,11 @@ jobs:
           curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- -b /usr/local/bin v${{ env.TRIVY_VERSION }}
           trivy --version
 
-      - name: Scan for Log Output and Fail on Critical/High Vulns
+      - name: Scan for VEX Statements
+        run: |
+          trivy image --scanners vuln --format vex ${{ env.DOCKER_IMAGE }}:${{ github.sha }} > openvex-template.json
+
+      - name: Scan for Log Output and Fail on Critical/High Vulnerabilities
         run: |
           trivy image \
             --show-suppressed \
