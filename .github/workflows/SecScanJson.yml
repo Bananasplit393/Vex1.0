@@ -47,23 +47,16 @@ jobs:
           curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- -b /usr/local/bin v${{ env.TRIVY_VERSION }}
           trivy --version
 
-      - name: Generate Software Bill of Materials (SBOM)
-        run: |
-          trivy image \
-            --format cyclonedx \
-            --output sbom.json \
-            ${{ env.DOCKER_IMAGE }}:${{ github.sha }}
-
-      - name: Scan SBOM and apply VEX
+      - name: Scan Image, Apply VEX, and Generate Final Report
         run: >-
-          trivy sbom 
-          --format json 
-          --output trivy-results.json 
-          --show-suppressed 
-          --vex ./openvex.json 
-          sbom.json
+          trivy image
+          --format json
+          --output trivy-results.json
+          --show-suppressed
+          --vex ./openvex.json
+          ${{ env.DOCKER_IMAGE }}:${{ github.sha }}
 
-      - name: Debug and Verify VEX Application
+      - name: Debug and Verify VEX Application PURL Mismatch
         if: always()
         run: |
           echo "---"
