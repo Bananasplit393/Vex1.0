@@ -115,12 +115,11 @@ jobs:
             echo ""
             jq -r '
               (.|"| Package | CVE | Version | Severity | Status |"),
-              (."|:---|:---|:---|:---|:---|"),
               (.[] | "| \(.package) | \(.cve) | \(.version) | \(.severity) | \(.status) |")
             ' vulnerabilities-table.json
           } >> $GITHUB_STEP_SUMMARY
 
-          echo "Markdown table added to Job Summary. ✅"
+          echo "Markdown table added to Job Summary ✅"
 
       # - name: Filter suppressed vulnerabilities
       #   run: |
