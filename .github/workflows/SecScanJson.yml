@@ -65,13 +65,13 @@ jobs:
       #     echo "SBOM scan completed and results saved to trivy-results.json"
 
       - name: Run trivy scan to test VEX file (Old)
-        run: |
-          trivy image \ 
-            --show-suppressed \
-            --vex ./openvex.json \
-            --exit-code 0 \
-            --severity HIGH,CRITICAL \
-            ${{ env.DOCKER_IMAGE }}:${{ github.sha }}
+        run: >-
+          trivy image 
+          --show-suppressed 
+          --vex ./openvex.json 
+          --exit-code 0 
+          --severity HIGH,CRITICAL 
+          ${{ env.DOCKER_IMAGE }}:${{ github.sha }}
 
       # - name: Run Trivy scan and generate result file
       #   run: |
