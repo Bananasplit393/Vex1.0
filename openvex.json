@@ -19,3 +19,6 @@
 		}
 	]
 }
+
+
+name: Build and Scan with Trivyon: push: branches: ["main"] pull_request: branches: ["main"]env: TRIVY_VERSION: 0.52.0 DOCKER_IMAGE: ghcr.io/${{ github.repository }}jobs: build_and_scan: name: Build, Scan and report runs-on: ubuntu-latest permissions: security-events: write contents: read actions: read packages: write steps: - name: Checkout code uses: actions/checkout@v4 - name: Log in to GitHub Container Registry uses: docker/login-action@v3 with: registry: ghcr.io username: ${{ github.actor }} password: ${{ secrets.GITHUB_TOKEN }} - name: Build and Push Docker image id: build-and-push uses: docker/build-push-action@v6 with: context: . push: true tags: ${{ env.DOCKER_IMAGE }}:${{ github.sha }} - name: Install trivy run: | curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- -b /usr/local/bin v${{ env.TRIVY_VERSION }} trivy --version - name: Run trivy scan to test VEX file run: | trivy image --show-suppressed --vex ./openvex.json --exit-code 1 --severity HIGH,CRITICAL ${{ env.DOCKER_IMAGE }}:${{ github.sha }} - name: Run Diagnostic Trivy Scan in JSON format run: | # Use the image tag here as well so Trivy can pull it from the registry. trivy image \ --format json \ ${{ env.DOCKER_IMAGE }}:${{ github.sha }} > trivy-results.json
